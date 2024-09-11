@@ -5,13 +5,18 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import br.com.fiap.dirtycode_kotlin.databinding.LoginPageLayoutBinding
 import com.google.gson.Gson
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import java.io.IOException
 
 class LoginPageActivity : Activity() {
 
@@ -24,9 +29,9 @@ class LoginPageActivity : Activity() {
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
 
-        // Inflate o layout com o binding
+
         binding = LoginPageLayoutBinding.inflate(layoutInflater)
-        setContentView(binding.root) // Define o layout da activity
+        setContentView(binding.root)
 
         binding.apply {
             btnLogin.setOnClickListener {
@@ -34,8 +39,8 @@ class LoginPageActivity : Activity() {
                 val senha = edtSenha.text.toString()
 
                 if (email.isNotEmpty() && senha.isNotEmpty()){
-                    val usuario = Usuario(nome = "", cpf = "", email = email, senha = senha, telefone = "")
-                    fazerLogin(usuario)
+                    Log.v("TESTES", email+" " +senha)
+                    fazerLogin(email, senha)
 
                 }
 
@@ -48,14 +53,42 @@ class LoginPageActivity : Activity() {
         }
 
     }
-    private fun fazerLogin(usuario: Usuario){
-        val json = gson.toJson(usuario)
+    private fun fazerLogin(email: String, senha: String) {
+        val json = """
+        {
+          "email": "$email",
+          "senha": "$senha"
+        }
+    """.trimIndent()
+
+        val requestBody = json.toRequestBody("application/json".toMediaType())
+        Log.v("TESTES", json)  // Log para verificar o JSON gerado
 
         val request = Request.Builder()
             .url("$BASE_URL/user/usuario")
-            .post(json.toRequestBody("application/json".toMediaType()))
+            .post(requestBody)
             .build()
 
-        Log.v("TESTES", request.toString())
+        val callback = object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    Toast.makeText(this@LoginPageActivity, "Erro de rede: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    if (response.isSuccessful) {
+                        val intent = Intent(this@LoginPageActivity, ProfilePageActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(this@LoginPageActivity, "Login falhou! Verifique suas credenciais.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        client.newCall(request).enqueue(callback)
     }
+
 }
