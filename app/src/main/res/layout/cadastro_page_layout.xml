@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/fundocinza">
 
-    <!-- Fundo para o formulário -->
+
     <View
         android:id="@+id/view"
         android:layout_width="302dp"
@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Logo da aplicação -->
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="150dp"
@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="0.1" />
 
-    <!-- Campo de Nome dentro da View -->
+
     <EditText
         android:id="@+id/edtNomeCadastro"
         android:layout_width="0dp"
@@ -46,7 +46,7 @@
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toBottomOf="@id/imageView" />
 
-    <!-- Campo de E-mail dentro da View -->
+
     <EditText
         android:id="@+id/edtEmailCadastro"
         android:layout_width="0dp"
@@ -66,7 +66,7 @@
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toBottomOf="@id/edtNomeCadastro" />
 
-    <!-- Campo de Senha dentro da View -->
+
     <EditText
         android:id="@+id/edtSenhaCadastro"
         android:layout_width="0dp"
@@ -85,4 +85,16 @@
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toBottomOf="@id/edtEmailCadastro" />
 
+    <Button
+        android:id="@+id/btnCadastro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#1480AA"
+        android:text="CADASTRAR"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view"
+        app:layout_constraintVertical_bias="0.924" />
 </androidx.constraintlayout.widget.ConstraintLayout>

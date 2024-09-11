@@ -13,14 +13,15 @@
         android:theme="@style/Theme.DirtyCodeKotlin"
         tools:targetApi="31" >
 
-        <activity android:name="com.example.dirtycode_reactnative.activity.HomePageActivity" android:exported="true">
+        <activity android:name=".activity.HomePageActivity" android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
-        <activity android:name="com.example.dirtycode_reactnative.activity.LoginPageActivity"/>
-        <activity android:name="com.example.dirtycode_reactnative.activity.CadastroPageActivity"/>
+        <activity android:name=".activity.LoginPageActivity"></activity>
+        <activity android:name=".activity.CadastroPageActivity"></activity>
+        <activity android:name=".activity.ProfilePageActivity"></activity>
     </application>
 
 </manifest>
