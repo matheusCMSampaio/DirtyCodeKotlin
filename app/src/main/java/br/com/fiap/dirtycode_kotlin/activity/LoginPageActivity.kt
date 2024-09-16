@@ -62,7 +62,7 @@ class LoginPageActivity : Activity() {
     """.trimIndent()
 
         val requestBody = json.toRequestBody("application/json".toMediaType())
-        Log.v("TESTES", json)  // Log para verificar o JSON gerado
+        Log.v("TESTES", json)
 
         val request = Request.Builder()
             .url("$BASE_URL/user/usuario")

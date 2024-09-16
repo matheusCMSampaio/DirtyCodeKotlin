@@ -16,7 +16,7 @@ import okhttp3.Response
 import java.io.IOException
 
 class CadastroPageActivity : Activity() {
-    val BASE_URL = "http://localhost:8080"
+    val BASE_URL = "http://192.168.0.100:8080"
     val gson = Gson()
     private val client = OkHttpClient()
     private lateinit var binding: CadastroPageLayoutBinding
