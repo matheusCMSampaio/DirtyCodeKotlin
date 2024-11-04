@@ -1,7 +1,9 @@
+
 package br.com.fiap.dirtycode_kotlin.activity
 
 import Usuario
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -25,10 +27,15 @@ class LoginPageActivity : Activity() {
     val gson = Gson()
     private val client = OkHttpClient()
 
-
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
 
+        // Check if user is already logged in
+        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        if (sharedPreferences.getBoolean("is_logged_in", false)) {
+            navigateToHomePage()
+            return
+        }
 
         binding = LoginPageLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -38,57 +45,57 @@ class LoginPageActivity : Activity() {
                 val email = edtEmail.text.toString()
                 val senha = edtSenha.text.toString()
 
-                if (email.isNotEmpty() && senha.isNotEmpty()){
-                    Log.v("TESTES", email+" " +senha)
+                if (email.isNotEmpty() && senha.isNotEmpty()) {
+                    Log.v("TESTES", "$email $senha")
                     fazerLogin(email, senha)
-
                 }
-
-
             }
             btnCadastro.setOnClickListener {
                 val intent = Intent(this@LoginPageActivity, CadastroPageActivity::class.java)
                 startActivity(intent)
             }
         }
-
     }
-    private fun fazerLogin(email: String, senha: String) {
-        val json = """
-        {
-          "email": "$email",
-          "senha": "$senha"
-        }
-    """.trimIndent()
 
-        val requestBody = json.toRequestBody("application/json".toMediaType())
-        Log.v("TESTES", json)
+    private fun fazerLogin(email: String, senha: String) {
+        val url = "$BASE_URL/login"
+        val json = """{"email": "$email", "senha": "$senha"}"""
+        val requestBody = json.toRequestBody("application/json; charset=utf-8".toMediaType())
 
         val request = Request.Builder()
-            .url("$BASE_URL/user/usuario")
+            .url(url)
             .post(requestBody)
             .build()
 
-        val callback = object : Callback {
+        client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Toast.makeText(this@LoginPageActivity, "Erro de rede: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginPageActivity, "Erro de conexão", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onResponse(call: Call, response: Response) {
-                runOnUiThread {
-                    if (response.isSuccessful) {
-                        val intent = Intent(this@LoginPageActivity, ProfilePageActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        Toast.makeText(this@LoginPageActivity, "Login falhou! Verifique suas credenciais.", Toast.LENGTH_SHORT).show()
+                if (response.isSuccessful) {
+                    // Save login state
+                    val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                    sharedPreferences.edit().putBoolean("is_logged_in", true).apply()
+
+                    runOnUiThread {
+                        Toast.makeText(this@LoginPageActivity, "Login bem-sucedido", Toast.LENGTH_SHORT).show()
+                        navigateToHomePage()
+                    }
+                } else {
+                    runOnUiThread {
+                        Toast.makeText(this@LoginPageActivity, "Credenciais inválidas", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
-        }
-
-        client.newCall(request).enqueue(callback)
+        })
     }
 
+    private fun navigateToHomePage() {
+        val intent = Intent(this@LoginPageActivity, HomePageActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
 }
